@@ -152,7 +152,7 @@ for k_use in sorted(set([best_k, 4, 5])):
         mk_comp  = {MONKEYS[m]: (monkey_id[unit_idx]==m).mean() for m in range(5)}
         cluster_stats.append(dict(
             label=c, n=len(cidx), cidx=cidx, unit_idx=unit_idx,
-            mean_r2=r2_c.mean(axis=2), mean_depth=np.nanmean(dc_c,axis=1),
+            mean_r2=np.nanmean(r2_c, axis=2), mean_depth=np.nanmean(dc_c,axis=1),
             mean_pk=np.nanmean(pk_c), ed=ed, ld=ld, shift=ld-ed,
             mk_comp=mk_comp,
         ))

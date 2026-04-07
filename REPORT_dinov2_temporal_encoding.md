@@ -100,7 +100,47 @@ Responsive units threshold: peak R² ≥ 0.05. Pooled N = 1178 units across 5 mo
 
 ---
 
-## 5. Comparison: DINOv2 vs ResNet50
+## 5. Pooled Clustering (Avg Patch Token)
+
+### 5.1 Methods
+
+Same pipeline as CLS (§4.1). Responsive units threshold: peak R² ≥ 0.05. Pooled N = 1393 units across 5 monkeys.
+
+### 5.2 k=4 clusters
+
+![Patch token clusters k=4](notebooks/figures/fig_dinov2_patch_clusters_k4.png)
+
+| Cluster | n | Peak R² | Early depth | Late depth | Δdepth | Dominant monkey |
+|---|---|---|---|---|---|---|
+| C0 | 68 | 0.17 | 5.80 | 5.99 | +0.19 | JianJian 51%, MaoDan 37% |
+| C1 | 212 | 0.14 | 6.02 | 6.41 | +0.39 | Mixed (ZhuangZhuang 31%) |
+| C2 | 710 | 0.15 | 6.01 | 6.45 | +0.45 | Mixed (MaoDan 27%) |
+| C3 | 403 | 0.20 | 6.16 | 6.70 | +0.55 | JianJian 65% |
+
+### 5.3 k=5 clusters
+
+![Patch token clusters k=5](notebooks/figures/fig_dinov2_patch_clusters_k5.png)
+
+### 5.4 k=6 clusters (best by silhouette)
+
+![Patch token clusters k=6](notebooks/figures/fig_dinov2_patch_clusters_k6.png)
+
+| Cluster | n | Peak R² | Δdepth | Composition | Interpretation |
+|---|---|---|---|---|---|
+| C0 | 60 | 0.17 | +0.14 | JianJian 53%, MaoDan 35% | Low-depth, moderate shift |
+| C1 | 134 | 0.15 | +0.32 | ZhuangZhuang 33% | Moderate shift, mixed |
+| C2 | 83 | 0.14 | +0.35 | ZhuangZhuang 27%, MaoDan 34% | Moderate shift |
+| C3 | 527 | 0.14 | +0.45 | Mixed all monkeys | Large cluster, universal shift |
+| C4 | 230 | 0.15 | +0.48 | Mixed (JianJian 17%) | Strong shift, monkey-mixed |
+| C5 | 359 | 0.21 | **+0.57** | JianJian 66% | High-R² deep-feature neurons |
+
+![Patch token per-monkey overview](notebooks/figures/fig_dinov2_patch_per_monkey.png)
+
+**Key finding:** Patch token clusters mirror CLS token results closely. The large monkey-mixed cluster (C3, n=527, Δd=+0.45) confirms temporal hierarchy is universal across all 5 animals. The high-R² cluster (C5) is JianJian-dominant, reflecting recording quality differences rather than biology.
+
+---
+
+## 6. Comparison: DINOv2 vs ResNet50
 
 | Metric | ResNet50 (6 layers) | DINOv2 CLS (12 blocks) |
 |---|---|---|
@@ -115,12 +155,13 @@ DINOv2's self-supervised training provides substantially better neural predictio
 
 ---
 
-## 6. Scripts
+## 7. Scripts
 
 | Script | Purpose |
 |---|---|
 | `notebooks/dinov2_time_resolved.py` | Single-session DINOv2 regression + figures |
 | `notebooks/dinov2_all_sessions.py` | Per-unit regression for all 5 monkeys |
 | `notebooks/dinov2_pooled_clustering.py` | Pooled clustering with CLS token features |
+| `notebooks/dinov2_pooled_clustering_patch.py` | Pooled clustering with avg patch token features |
 | `notebooks/cache/dinov2_nsd_features.pkl` | Cached DINOv2 features (1072 images × 12 blocks × 2 types) |
 | `notebooks/cache/time_resolved_perunit_dinov2_{monkey}.pkl` | Per-session regression results |

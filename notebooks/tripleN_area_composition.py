@@ -13,23 +13,23 @@ Usage
     python tripleN_area_composition.py
 
 To extract units for a specific area (e.g. V4):
+    from core.tripleN import extract_area_units
     units = extract_area_units('V4', reliability_threshold=0.2)
-    # returns dict: {ses_idx: {'response': (n_units, 1072), 'reliability': ..., 'pos': ...}}
 """
 
-import os, glob
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
 import numpy as np
 import pandas as pd
-import scipy.io as sio
 import matplotlib.pyplot as plt
+from core.tripleN import area_metadata, area_xyz as _area_xyz, session_summary, extract_area_units
 
-TRIPLE_N  = '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang/Datasets/Triple_N'
-FIG_DIR   = os.path.join(os.path.dirname(__file__), 'figures')
+FIG_DIR = os.path.join(os.path.dirname(__file__), 'figures')
 os.makedirs(FIG_DIR, exist_ok=True)
 
-# ── Load area metadata ────────────────────────────────────────────────────────
-area_df  = pd.read_excel(f'{TRIPLE_N}/Others/exclude_area.xls',  engine='xlrd')
-area_xyz = pd.read_excel(f'{TRIPLE_N}/Others/AreaXYZ.xlsx',      engine='openpyxl')
+area_df     = area_metadata()
+area_xyz    = _area_xyz()
 
 # ── Session summary ───────────────────────────────────────────────────────────
 def load_session_summary(ses_idx: int) -> dict | None:

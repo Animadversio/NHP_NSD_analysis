@@ -71,6 +71,7 @@ def load_data_from_GoodUnitStrc(h5_file):
         "dataset_valid_idx": dataset_valid_idx,
         "Raster": Raster,
         "response_matrix_img": response_matrix_img,
+        "PsthRange": PsthRange,
         "unittype": unittype,
         "KSidx": KSidx,
         "spikepos": spikepos,

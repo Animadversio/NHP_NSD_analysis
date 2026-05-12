@@ -18,7 +18,7 @@ from scipy.ndimage import gaussian_filter1d
 from NSD_utils.h5_dataset_utils import load_data_from_GoodUnitStrc
 
 CACHE_DIR  = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
-FIGDIR     = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+FIGDIR     = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 DATA_ROOT  = '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang/Datasets/NSD_N3'
 SESSION    = 'GoodUnit_240629_JianJian_NSD1000_LOC_g2.mat'
 IMG_PKL    = join(CACHE_DIR, 'nsd_image_paths.pkl')

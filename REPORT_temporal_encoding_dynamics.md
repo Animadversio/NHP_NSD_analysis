@@ -28,7 +28,7 @@ ResNet50 (pretrained ImageNet) features were extracted at 6 layers and spatially
 
 ### 2.1 Multi-monkey R² curves
 
-![R² over time across monkeys](notebooks/figures/figA_time_resolved_R2_curves.png)
+![R² over time across monkeys](figures/figA_time_resolved_R2_curves.png)
 ![Multi-monkey comparison](notebooks/fig_multimonkey_R2_time.png)
 
 **Key findings:**
@@ -50,7 +50,7 @@ where $l \in \{0,1,2,3,4,5\}$ indexes `[relu, layer1, layer2, layer3, layer4, av
 
 ### 3.1 Population and per-unit depth curves
 
-![Weighted depth curves](notebooks/figures/fig_weighted_depth_curves.png)
+![Weighted depth curves](figures/fig_weighted_depth_curves.png)
 
 **Panel summary:**
 - *Population mean depth* rises slightly toward deeper layers in the late window (180–350 ms)
@@ -60,7 +60,7 @@ where $l \in \{0,1,2,3,4,5\}$ indexes `[relu, layer1, layer2, layer3, layer4, av
 
 ### 3.2 Single-neuron examples
 
-![Single neuron depth](notebooks/figures/fig_single_neuron_depth.png)
+![Single neuron depth](figures/fig_single_neuron_depth.png)
 
 Top row: R²(layer, time) per unit. Bottom row: weighted depth curve. Left columns = "deeper-late" neurons; right = stable layer3 neurons.
 
@@ -76,7 +76,7 @@ Top row: R²(layer, time) per unit. Bottom row: weighted depth curve. Left colum
 2. **Wilcoxon signed-rank test** on paired (early_depth, late_depth)
 3. **Layer R² ratio:** late/early retention rate per layer
 
-![Temporal hierarchy test](notebooks/figures/fig_temporal_hierarchy.png)
+![Temporal hierarchy test](figures/fig_temporal_hierarchy.png)
 
 ### 4.2 Results (JianJian, 456 units)
 
@@ -119,7 +119,7 @@ Pipeline: NaN imputation → StandardScaler → PCA (12–20 PCs, 80% variance) 
 
 ### 5.2 Single-session clusters (JianJian, k=3)
 
-![Single-session clusters k=3](notebooks/figures/fig_clusters_k3.png)
+![Single-session clusters k=3](figures/fig_clusters_k3.png)
 
 | Cluster | n | Peak R² | Δdepth | Interpretation |
 |---|---|---|---|---|
@@ -131,7 +131,7 @@ Pipeline: NaN imputation → StandardScaler → PCA (12–20 PCs, 80% variance) 
 
 ### 5.3 Pooled clustering across all 5 monkeys (N=1175 responsive units, k=5)
 
-![Pooled clusters k=5](notebooks/figures/fig_pooled_clusters_k5.png)
+![Pooled clusters k=5](figures/fig_pooled_clusters_k5.png)
 
 | Cluster | n | Peak R² | Δdepth | Monkey composition | Interpretation |
 |---|---|---|---|---|---|

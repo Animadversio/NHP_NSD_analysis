@@ -1,2 +1,5 @@
 agent_out/*
 __pycache__/
+*.pt
+*.pkl
+notebooks/cache/

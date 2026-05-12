@@ -20,7 +20,7 @@ This report extends the ResNet50 time-resolved encoding analysis to DINOv2, a se
 
 ## 2. Single-Session Results (JianJian)
 
-![DINOv2 JianJian time-resolved results](notebooks/figures/fig_dinov2_time_resolved.png)
+![DINOv2 JianJian time-resolved results](figures/fig_dinov2_time_resolved.png)
 
 **Panels:**
 - *Top row:* Mean R² per block over time (CLS left, patch right) — clear peak around blocks 7–8 at 100–150ms
@@ -41,7 +41,7 @@ This report extends the ResNet50 time-resolved encoding analysis to DINOv2, a se
 
 ## 3. Per-Monkey Comparison
 
-![DINOv2 per-monkey heatmaps and depth curves](notebooks/figures/fig_dinov2_per_monkey.png)
+![DINOv2 per-monkey heatmaps and depth curves](figures/fig_dinov2_per_monkey.png)
 
 Each panel shows the mean R²(block × time) heatmap and population weighted depth curve.
 
@@ -70,7 +70,7 @@ Responsive units threshold: peak R² ≥ 0.05. Pooled N = 1178 units across 5 mo
 
 ### 4.2 k=4 clusters
 
-![Pooled clusters k=4](notebooks/figures/fig_dinov2_pooled_clusters_k4.png)
+![Pooled clusters k=4](figures/fig_dinov2_pooled_clusters_k4.png)
 
 | Cluster | n | Peak R² | Early depth | Late depth | Δdepth | Dominant monkey |
 |---|---|---|---|---|---|---|
@@ -81,11 +81,11 @@ Responsive units threshold: peak R² ≥ 0.05. Pooled N = 1178 units across 5 mo
 
 ### 4.3 k=5 clusters
 
-![Pooled clusters k=5](notebooks/figures/fig_dinov2_pooled_clusters_k5.png)
+![Pooled clusters k=5](figures/fig_dinov2_pooled_clusters_k5.png)
 
 ### 4.4 k=6 clusters (best by silhouette)
 
-![Pooled clusters k=6](notebooks/figures/fig_dinov2_pooled_clusters_k6.png)
+![Pooled clusters k=6](figures/fig_dinov2_pooled_clusters_k6.png)
 
 | Cluster | n | Peak R² | Δdepth | Composition | Interpretation |
 |---|---|---|---|---|---|
@@ -108,7 +108,7 @@ Same pipeline as CLS (§4.1). Responsive units threshold: peak R² ≥ 0.05. Poo
 
 ### 5.2 k=4 clusters
 
-![Patch token clusters k=4](notebooks/figures/fig_dinov2_patch_clusters_k4.png)
+![Patch token clusters k=4](figures/fig_dinov2_patch_clusters_k4.png)
 
 | Cluster | n | Peak R² | Early depth | Late depth | Δdepth | Dominant monkey |
 |---|---|---|---|---|---|---|
@@ -119,11 +119,11 @@ Same pipeline as CLS (§4.1). Responsive units threshold: peak R² ≥ 0.05. Poo
 
 ### 5.3 k=5 clusters
 
-![Patch token clusters k=5](notebooks/figures/fig_dinov2_patch_clusters_k5.png)
+![Patch token clusters k=5](figures/fig_dinov2_patch_clusters_k5.png)
 
 ### 5.4 k=6 clusters (best by silhouette)
 
-![Patch token clusters k=6](notebooks/figures/fig_dinov2_patch_clusters_k6.png)
+![Patch token clusters k=6](figures/fig_dinov2_patch_clusters_k6.png)
 
 | Cluster | n | Peak R² | Δdepth | Composition | Interpretation |
 |---|---|---|---|---|---|
@@ -134,7 +134,7 @@ Same pipeline as CLS (§4.1). Responsive units threshold: peak R² ≥ 0.05. Poo
 | C4 | 230 | 0.15 | +0.48 | Mixed (JianJian 17%) | Strong shift, monkey-mixed |
 | C5 | 359 | 0.21 | **+0.57** | JianJian 66% | High-R² deep-feature neurons |
 
-![Patch token per-monkey overview](notebooks/figures/fig_dinov2_patch_per_monkey.png)
+![Patch token per-monkey overview](figures/fig_dinov2_patch_per_monkey.png)
 
 **Key finding:** Patch token clusters mirror CLS token results closely. The large monkey-mixed cluster (C3, n=527, Δd=+0.45) confirms temporal hierarchy is universal across all 5 animals. The high-R² cluster (C5) is JianJian-dominant, reflecting recording quality differences rather than biology.
 

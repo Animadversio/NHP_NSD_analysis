@@ -1,0 +1,5 @@
+,,rho_p,pval_p,rho_s,pval_s,D2,imgN,label,layer,img_space,monkey,date,n_images_total,n_units_total
+cnn_features_pca64,RidgeCV,0.3826178204701767,0.0,0.27978282464663534,0.0,0.04060824510385476,1072.0,ZhuangZhuang_240817,,ZhuangZhuang_240817,ZhuangZhuang,240817,1072,250
+cnn_features_pca128,RidgeCV,0.4035162460406164,0.0,0.30752833718974565,0.0,0.057773786411146444,1072.0,ZhuangZhuang_240817,,ZhuangZhuang_240817,ZhuangZhuang,240817,1072,250
+cnn_features_pca256,RidgeCV,0.4035507479793726,0.0,0.3075756855076841,0.0,0.05780155640126589,1072.0,ZhuangZhuang_240817,,ZhuangZhuang_240817,ZhuangZhuang,240817,1072,250
+cnn_features_sp_avg,RidgeCV,0.40360191701209674,0.0,0.30764562776127147,0.0,0.05784335571367053,1072.0,ZhuangZhuang_240817,,ZhuangZhuang_240817,ZhuangZhuang,240817,1072,250

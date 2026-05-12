@@ -6,7 +6,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 CACHE_DIR = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
-OUT_DIR   = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+OUT_DIR   = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 
 with open(f'{CACHE_DIR}/time_resolved_regression_results.pkl', 'rb') as f:
     res = pickle.load(f)

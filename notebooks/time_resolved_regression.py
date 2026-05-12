@@ -28,7 +28,7 @@ from neural_regress.regress_lib import sweep_regressors
 DATA_ROOT = '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang/Datasets/NSD_N3'
 IMG_DIR   = join(DATA_ROOT, 'NSD1000_LOC')
 SESSION_FILE = join(DATA_ROOT, 'GoodUnit_240629_JianJian_NSD1000_LOC_g2.mat')
-OUT_DIR   = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+OUT_DIR   = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 CACHE_DIR = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)

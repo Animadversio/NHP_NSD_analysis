@@ -25,7 +25,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from core.tripleN import area_metadata, area_xyz as _area_xyz, session_summary, extract_area_units
 
-FIG_DIR = os.path.join(os.path.dirname(__file__), 'figures', 'tripleN_exploration')
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures', 'tripleN_exploration')
 os.makedirs(FIG_DIR, exist_ok=True)
 
 area_df     = area_metadata()

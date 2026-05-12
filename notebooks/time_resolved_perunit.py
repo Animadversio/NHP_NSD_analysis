@@ -27,7 +27,7 @@ from NSD_utils.h5_dataset_utils import load_data_from_GoodUnitStrc
 DATA_ROOT    = '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang/Datasets/NSD_N3'
 SESSION_FILE = join(DATA_ROOT, 'GoodUnit_240629_JianJian_NSD1000_LOC_g2.mat')
 CACHE_DIR    = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
-OUT_DIR      = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+OUT_DIR      = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 os.makedirs(OUT_DIR, exist_ok=True)
 
 LAYERS       = ['relu', 'layer1', 'layer2', 'layer3', 'layer4', 'avgpool']

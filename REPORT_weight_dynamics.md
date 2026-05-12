@@ -92,7 +92,7 @@ The eigenvalues $\{\lambda_i\}$ of $\hat{\mathbf{A}}$ characterize the dynamics:
 
 ### 3.1 Per-unit cosine similarity over time
 
-![Per-unit cosine similarity](notebooks/figures/fig_weight_cosine_JianJian.png)
+![Per-unit cosine similarity](figures/fig_weight_cosine_JianJian.png)
 
 **Key finding:** Individual units' coding directions are *not* stable across time.
 
@@ -110,7 +110,7 @@ The heatmap (right panel) shows this is consistent across units: all responsive 
 
 ### 3.2 Population subspace canonical angles
 
-![Subspace canonical angles](notebooks/figures/fig_subspace_angles_JianJian.png)
+![Subspace canonical angles](figures/fig_subspace_angles_JianJian.png)
 
 The top-20 canonical angles between the population subspace at each time and the reference subspace hover at **~60–65°** across most of the response window. Even at the plateau (~100–250ms), the code is ~60° away from peak — the subspace rotates dramatically from pre-stimulus baseline through the response.
 
@@ -120,7 +120,7 @@ The top-20 canonical angles between the population subspace at each time and the
 
 ### 3.3 Weight trajectory dimensionality
 
-![Weight trajectory dimensionality and 2D path](notebooks/figures/fig_weight_trajectory_JianJian.png)
+![Weight trajectory dimensionality and 2D path](figures/fig_weight_trajectory_JianJian.png)
 
 **Participation ratio = 4.3** — out of 90 possible time bins, the entire temporal evolution of the population code lives in a ~4-dimensional manifold.
 
@@ -136,7 +136,7 @@ The 2D trajectory (center panel) shows a characteristic arc: starting near the o
 
 ### 3.4 Linear State Space model
 
-![LDS fit and eigenvalues](notebooks/figures/fig_LDS_JianJian.png)
+![LDS fit and eigenvalues](figures/fig_LDS_JianJian.png)
 
 | Metric | Value |
 |---|---|

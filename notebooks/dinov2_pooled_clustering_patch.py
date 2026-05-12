@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 CACHE_DIR = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
-FIGDIR    = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+FIGDIR    = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 os.makedirs(FIGDIR, exist_ok=True)
 
 MONKEYS = ['JianJian','FaCai','TuTu','ZhuangZhuang','MaoDan']

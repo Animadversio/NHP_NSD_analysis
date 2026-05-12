@@ -15,7 +15,7 @@ CACHE_DIR  = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache'
 DATA_ROOT  = '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang/Datasets/NSD_N3'
 STORE_DIR  = os.environ.get('STORE_DIR', '/n/holylfs06/LABS/kempner_fellow_binxuwang/Users/binxuwang')
 WCOEF_DIR  = os.path.join(STORE_DIR, 'weight_coefs')
-FIG_DIR    = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+FIG_DIR    = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 os.makedirs(WCOEF_DIR, exist_ok=True)
 
 N_BLOCKS = 12; N_PCA = 200; ALPHAS = np.logspace(-2, 6, 25)

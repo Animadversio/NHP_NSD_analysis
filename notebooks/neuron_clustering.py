@@ -18,7 +18,7 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 
 CACHE  = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/cache/time_resolved_perunit_JianJian.pkl'
-FIGDIR = '/n/home12/binxuwang/Github/NHP_NSD_analysis/notebooks/figures'
+FIGDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 os.makedirs(FIGDIR, exist_ok=True)
 
 with open(CACHE, 'rb') as f: res = pkl.load(f)

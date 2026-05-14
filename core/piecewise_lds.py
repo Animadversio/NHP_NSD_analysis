@@ -95,7 +95,7 @@ def diagnose_lds_residuals(W: np.ndarray, k: int = 10) -> dict:
 # Segment fitting
 # ---------------------------------------------------------------------------
 
-def fit_segment(Z: np.ndarray, t_start: int, t_end: int):
+def fit_segment(Z: np.ndarray, t_start: int, t_end: int, alpha: float = 0.0):
     """
     Fit A for the slice Z[:, t_start:t_end] → z[t+1] = A z[t].
 
@@ -104,6 +104,8 @@ def fit_segment(Z: np.ndarray, t_start: int, t_end: int):
     Z       : (k, n_t) latent trajectory
     t_start : first time index of segment (inclusive)
     t_end   : last time index of segment (exclusive)
+    alpha   : ridge regularisation for A (0 = OLS, >0 = ridge).
+              Recommended ≥ 1e-2 for short segments to keep |λ| ≤ 1.
 
     Returns
     -------
@@ -113,8 +115,20 @@ def fit_segment(Z: np.ndarray, t_start: int, t_end: int):
     seg = Z[:, t_start:t_end]           # (k, seg_len)
     if seg.shape[1] < 2:
         return np.eye(Z.shape[0]), float('nan')
-    A, _, _, _ = lstsq(seg[:, :-1].T, seg[:, 1:].T, rcond=None)
-    A = A.T
+
+    X = seg[:, :-1].T   # (n_pairs, k)
+    Y = seg[:, 1:].T    # (n_pairs, k)
+    k = Z.shape[0]
+
+    if alpha > 0:
+        # Ridge: solve (X'X + α I) A' = X'Y  →  A = Y'X (X'X + α I)^{-1}
+        XtX = X.T @ X + alpha * np.eye(k)
+        A_T = np.linalg.solve(XtX, X.T @ Y)  # (k, k)
+        A = A_T.T
+    else:
+        A, _, _, _ = lstsq(X, Y, rcond=None)
+        A = A.T
+
     pred = A @ seg[:, :-1]
     r2 = _r2(seg[:, 1:], pred)
     return A, r2
@@ -129,6 +143,7 @@ def fit_piecewise_lds(
     breakpoints: list[int],
     k: int = 10,
     reset_at_boundaries: bool = True,
+    alpha: float = 1.0,
 ) -> dict:
     """
     Fit independent A_k per temporal segment.
@@ -143,6 +158,8 @@ def fit_piecewise_lds(
     reset_at_boundaries : if True (default), open-loop rollout resets z to the
                           true value at each segment boundary.  If False, error
                           accumulates across boundaries (full open-loop).
+    alpha               : ridge regularisation for each A_k fit (default 1.0).
+                          Keeps eigenvalues near the unit circle for short segs.
 
     Returns
     -------
@@ -165,7 +182,7 @@ def fit_piecewise_lds(
 
     A_list, eigs_list, r2_onestep = [], [], []
     for t_start, t_end in segments:
-        A_seg, r2_seg = fit_segment(Z, t_start, t_end)
+        A_seg, r2_seg = fit_segment(Z, t_start, t_end, alpha=alpha)
         A_list.append(A_seg)
         eigs_list.append(np.linalg.eigvals(A_seg))
         r2_onestep.append(r2_seg)
@@ -204,7 +221,8 @@ def find_changepoints(
     min_size: int = 3,
 ) -> list[int]:
     """
-    Data-driven changepoint detection via PELT with fixed number of breakpoints.
+    Data-driven changepoint detection via Dynp (dynamic programming) with
+    a fixed number of breakpoints.
 
     Parameters
     ----------
@@ -221,7 +239,7 @@ def find_changepoints(
     import ruptures as rpt
     Z, _, _ = get_latent_trajectory(W, k)
     signal = Z.T.astype(np.float64)             # (n_t, k)
-    algo = rpt.Pelt(model=model, min_size=min_size).fit(signal)
+    algo = rpt.Dynp(model=model, min_size=min_size).fit(signal)
     result = algo.predict(n_bkps=n_bkps)
     return result[:-1]                           # drop trailing n_t
 
@@ -236,9 +254,13 @@ def find_changepoints_bic(
     """
     Automatic changepoint detection with BIC-based model selection.
 
-    Sweeps K = 0 … max_bkps, computes BIC for each, returns optimal.
+    Uses Dynp (exact dynamic programming) to find the globally optimal
+    segmentation for each K, then selects K via BIC:
 
-    BIC = ruptures_cost + (K * k² + K) * log(n_t)
+        BIC(K) = cost(K) + (K+1) * k² * log(n_t)
+
+    where cost is the ruptures reconstruction cost and (K+1)*k² counts
+    the free parameters in K+1 transition matrices A_k ∈ R^{k×k}.
 
     Returns
     -------
@@ -247,20 +269,21 @@ def find_changepoints_bic(
         'best_n'      : int — optimal number of breakpoints
         'bic_scores'  : list[float] — BIC per n_bkps (index = n_bkps)
         'costs'       : list[float] — raw ruptures cost per n_bkps
+        'all_results' : list[list[int]] — breakpoints for each K tried
     """
     import ruptures as rpt
     Z, _, _ = get_latent_trajectory(W, k)
     n_t = Z.shape[1]
     signal = Z.T.astype(np.float64)
 
-    algo = rpt.Pelt(model=model, min_size=min_size).fit(signal)
+    algo = rpt.Dynp(model=model, min_size=min_size).fit(signal)
 
     bic_scores, costs, results = [], [], []
     for n in range(0, max_bkps + 1):
         try:
             bkps = algo.predict(n_bkps=n)
             cost = algo.cost.sum_of_costs(bkps)
-            n_params = (n + 1) * k ** 2 + n     # A matrices + break locations
+            n_params = (n + 1) * k ** 2          # one A matrix per segment
             bic = cost + n_params * np.log(n_t)
             bic_scores.append(float(bic))
             costs.append(float(cost))

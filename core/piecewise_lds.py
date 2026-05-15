@@ -5,10 +5,11 @@ The regression weight matrix W[t, u] encodes the coding direction in PCA feature
 space that best predicts unit u at time t.  Projecting the population trajectory
 into a k-dimensional subspace gives z_t ∈ R^k.  This module fits:
 
-  Global LDS:     z[t+1] = A z[t]               (single A)
-  Piecewise LDS:  z[t+1] = A_k z[t]  for t ∈ segment k  (one A per segment)
+  Global LDS (one-step):        z[t+1] = A z[t]               (OLS one-step)
+  Global LDS (open-loop/AR):    min_A  Σ_t ||z_t - A^t z_0||²  (gradient descent)
+  Piecewise LDS:                z[t+1] = A_k z[t]  for t ∈ segment k
 
-and provides data-driven changepoint detection via PELT (ruptures library).
+and provides data-driven changepoint detection via Dynp (ruptures library).
 """
 
 import numpy as np
@@ -307,6 +308,101 @@ def find_changepoints_bic(
 # ---------------------------------------------------------------------------
 # Comparison utility
 # ---------------------------------------------------------------------------
+
+def fit_lds_openloop(
+    W: np.ndarray,
+    k: int = 10,
+    n_iter: int = 2000,
+    lr: float = 1e-3,
+    reg: float = 1e-4,
+    verbose: bool = False,
+) -> dict:
+    """
+    Fit a global LDS by minimising the *open-loop* (autoregressive) prediction
+    error rather than the standard one-step squared error.
+
+    The loss is:
+        L(A) = Σ_{t=1}^{T} ||z_t - A^t z_0||²_F  +  reg * ||A||²_F
+
+    This is non-linear in A (because A^t) and is optimised via Adam gradient
+    descent using PyTorch.
+
+    Starting from the one-step OLS estimate of A ensures fast convergence.
+
+    Parameters
+    ----------
+    W       : (n_t, n_units, n_pca)
+    k       : latent dimension
+    n_iter  : gradient descent iterations
+    lr      : Adam learning rate
+    reg     : Frobenius regularisation on A (keeps eigenvalues bounded)
+    verbose : print loss every 200 iterations
+
+    Returns
+    -------
+    dict:
+        'Z'           : (k, n_t) — latent trajectory
+        'Z_ol'        : (k, n_t) — open-loop prediction from A_ol
+        'A_ol'        : (k, k)   — open-loop fitted A
+        'A_onestep'   : (k, k)   — one-step OLS A (initialisation)
+        'eigs_ol'     : (k,)     — eigenvalues of A_ol
+        'eigs_onestep': (k,)     — eigenvalues of A_onestep
+        'r2_openloop' : float    — open-loop R² with A_ol
+        'r2_onestep'  : float    — one-step R² with A_ol (for reference)
+        'loss_curve'  : list[float]
+        'var_explained': (k,)
+    """
+    import torch
+
+    Z, var, _ = get_latent_trajectory(W, k)
+    n_t = Z.shape[1]
+
+    # Initialise from one-step OLS
+    A_init, _, _, _ = lstsq(Z[:, :-1].T, Z[:, 1:].T, rcond=None)
+    A_init = A_init.T                                    # (k, k)
+
+    Z_t = torch.tensor(Z, dtype=torch.float64)
+    A   = torch.tensor(A_init.copy(), dtype=torch.float64, requires_grad=True)
+    opt = torch.optim.Adam([A], lr=lr)
+
+    loss_curve = []
+    for it in range(n_iter):
+        # Roll out open-loop from z_0
+        z = Z_t[:, 0]
+        loss = torch.zeros(1, dtype=torch.float64)
+        for t in range(1, n_t):
+            z = A @ z
+            loss = loss + ((z - Z_t[:, t]) ** 2).sum()
+        if reg > 0:
+            loss = loss + reg * (A ** 2).sum()
+        opt.zero_grad()
+        loss.backward()
+        opt.step()
+        loss_curve.append(float(loss.item()))
+        if verbose and it % 200 == 0:
+            print(f'  iter {it:4d}  loss={loss.item():.4f}')
+
+    A_ol = A.detach().numpy()
+
+    # Evaluate open-loop trajectory
+    Z_ol = np.zeros_like(Z)
+    Z_ol[:, 0] = Z[:, 0]
+    for t in range(1, n_t):
+        Z_ol[:, t] = A_ol @ Z_ol[:, t - 1]
+
+    return {
+        'Z':            Z,
+        'Z_ol':         Z_ol,
+        'A_ol':         A_ol,
+        'A_onestep':    A_init,
+        'eigs_ol':      np.linalg.eigvals(A_ol),
+        'eigs_onestep': np.linalg.eigvals(A_init),
+        'r2_openloop':  _r2(Z, Z_ol),
+        'r2_onestep':   _r2(Z[:, 1:], A_ol @ Z[:, :-1]),
+        'loss_curve':   loss_curve,
+        'var_explained': np.cumsum(var),
+    }
+
 
 def compare_lds_vs_piecewise(
     W: np.ndarray,

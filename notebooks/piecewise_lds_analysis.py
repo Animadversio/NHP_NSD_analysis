@@ -234,21 +234,27 @@ for col, (monkey, res) in enumerate(all_results.items()):
         ax.set_ylabel('||z[t+1]−Az[t]||²')
 
     # Bottom row: latent trajectory PC1 vs PC2 — true vs open-loop predictions
-    Z    = g['Z']
-    # Rebuild global open-loop from stored A
-    A_gl = g['A']
-    Z_gl = np.zeros_like(Z)
-    Z_gl[:, 0] = Z[:, 0]
-    for t in range(1, Z.shape[1]):
-        Z_gl[:, t] = A_gl @ Z_gl[:, t - 1]
+    # Use pw['Z'] (k=K_PW, same SVD as Z_pred) as the reference to keep
+    # all three curves in the same latent space.  Fit a k=K_PW global LDS
+    # on pw['Z'] for a fair comparison (avoids sign-flip across SVD calls).
+    Z_pw   = pw['Z']          # (K_PW, n_t) — true trajectory in k=5 space
+    Z_pred = pw['Z_pred']     # (K_PW, n_t) — piecewise open-loop
+    # Re-fit global A in the same k=5 space
+    from numpy.linalg import lstsq as _lstsq
+    A_gl5, _, _, _ = _lstsq(Z_pw[:, :-1].T, Z_pw[:, 1:].T, rcond=None)
+    A_gl5 = A_gl5.T
+    Z_gl5 = np.zeros_like(Z_pw)
+    Z_gl5[:, 0] = Z_pw[:, 0]
+    for t in range(1, Z_pw.shape[1]):
+        Z_gl5[:, t] = A_gl5 @ Z_gl5[:, t - 1]
 
     ax2 = axes[1, col]
-    ax2.plot(Z[0], Z[1], 'k-', lw=2, alpha=0.8, label='True')
-    ax2.plot(Z_gl[0], Z_gl[1], color='steelblue', lw=1.5, ls='--', alpha=0.7,
+    ax2.plot(Z_pw[0], Z_pw[1], 'k-', lw=2, alpha=0.8, label='True')
+    ax2.plot(Z_gl5[0], Z_gl5[1], color='steelblue', lw=1.5, ls='--', alpha=0.7,
              label=f'Global OL R²={g["r2_openloop"]:.2f}')
-    ax2.plot(pw['Z_pred'][0], pw['Z_pred'][1], color='tomato', lw=1.5, ls='--', alpha=0.7,
+    ax2.plot(Z_pred[0], Z_pred[1], color='tomato', lw=1.5, ls='--', alpha=0.7,
              label=f'PW OL R²={pw["r2_openloop"]:.2f}')
-    ax2.scatter(Z[0, 0], Z[1, 0], s=60, color='green', zorder=5)
+    ax2.scatter(Z_pw[0, 0], Z_pw[1, 0], s=60, color='green', zorder=5)
     ax2.set_xlabel('PC1')
     if col == 0:
         ax2.set_ylabel('PC2')

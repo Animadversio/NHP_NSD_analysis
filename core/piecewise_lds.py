@@ -84,6 +84,7 @@ def diagnose_lds_residuals(W: np.ndarray, k: int = 10) -> dict:
     return {
         'residuals':   residuals,
         'Z':           Z,
+        'Z_ol':        Z_ol,
         'A':           A,
         'r2_onestep':  _r2(Z[:, 1:], pred_onestep),
         'r2_openloop': _r2(Z, Z_ol),
